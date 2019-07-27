@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
 #
 # PyBrasil - Functions useful for most Brazil's ERPs
 #
@@ -43,6 +42,7 @@ from __future__ import (division, print_function, unicode_literals,
                         absolute_import)
 
 
+from past.builtins import basestring
 from pytz import (datetime, timezone, tzinfo, UTC)
 from datetime import datetime as datetime_sem_fuso, date, time
 from time import strftime
@@ -67,6 +67,9 @@ def fuso_horario_sistema():
 
 
 def data_hora_horario_brasilia(data):
+    if isinstance(data, basestring):
+        data = parse_datetime(data)
+
     if not isinstance(data, (datetime.datetime, datetime_sem_fuso, date, time)):
         return None
 
@@ -172,9 +175,9 @@ def hora_decimal_to_horas_minutos_segundos(valor):
         return None
 
     valor = D(valor)
-    horas = D(int(valor))
-    minutos = D(int((valor * 60) - (horas * 60)))
-    segundos = D(int((valor * 60 * 60) - (horas * 60 * 60) - (minutos * 60)))
+    horas = D(valor).quantize(D('1'))
+    minutos = D(valor * 60).quantize(D('1')) - (horas * 60)
+    segundos = D(valor * 60 * 60).quantize(D('1')) - (horas * 60 * 60) - (minutos * 60)
 
     return horas, minutos, segundos
 
@@ -184,9 +187,9 @@ def horario_decimal_to_hora_decimal(valor):
         return None
 
     valor = D(valor)
-    horas = D(int(valor))
-    minutos = D(int((valor * 100) - (horas * 100)))
-    segundos = D(int((valor * 100 * 100) - (horas * 100 * 100) - (minutos * 100)))
+    horas = D(valor).quantize(D('1'))
+    minutos = D(valor * 100).quantize(D('1')) - (horas * 100)
+    segundos = D(valor * 100 * 100).quantize(D('1')) - (horas * 100 * 100) - (minutos * 100)
 
     valor = (horas * 60) + minutos + (segundos / 60)
     valor /= 60
@@ -200,3 +203,67 @@ def horas_minutos_segundos_to_hora_decimal(horas, minutos, segundos):
 
 def horas_minutos_segundos_to_horario_decimal(horas, minutos, segundos):
     return D(horas) + (D(minutos) / 100) + (D(segundos) / 100 / 100)
+
+
+class FusoHorario(object):
+    def __init__(self, fuso_horario=HB):
+        self.fuso_horario = fuso_horario
+
+    @property
+    def fuso_horario(self):
+        return self._fuso_horario
+
+    @fuso_horario.setter
+    def fuso_horario(self, valor):
+        if isinstance(valor, tzinfo.tzinfo):
+            self._fuso_horario = valor
+        elif isinstance(valor, basestring):
+            try:
+                self.fuso_horario = timezone(valor)
+            except:
+                pass
+
+    def property_data_hora_getter(self, valor):
+        return self.fuso_horario.normalize(valor)
+
+    def property_data_hora_setter(self, valor):
+        if isinstance(valor, datetime.datetime):
+            if not valor.tzinfo:
+                valor = self.fuso_horario.localize(valor)
+
+            return UTC.normalize(valor)
+
+        elif isinstance(valor, datetime_sem_fuso):
+            valor = self.fuso_horario.localize(valor)
+            return property_data_hora_setter(valor)
+
+        elif isinstance(valor, basestring):
+            valor = parse_datetime(valor)
+            return property_data_hora_setter(valor)
+
+    def property_data_hora_formatada(self, valor):
+        return formata_data(valor, '%d/%m/%Y %H:%M:%S')
+
+    def property_data_hora_iso(self, valor):
+        return formata_data(valor, '%Y-%m-%dT%H:%M:%S')
+
+    def property_data_hora_iso_utc(self, valor):
+        return formata_data(valor, '%Y-%m-%dT%H:%M:%S%z')
+
+    def property_data_hora_data(self, valor):
+        return valor.date()
+
+    def property_data_hora_data_formatada(self, valor):
+        return formata_data(valor, '%d/%m/%Y')
+
+    def property_data_hora_data_iso(self, valor):
+        return formata_data(valor, '%Y-%m-%d')
+
+    def property_data_hora_hora(self, valor):
+        return valor.time()
+
+    def property_data_hora_hora_formatada(self, valor):
+        return formata_data(valor, '%H:%M:%S')
+
+    def property_data_hora_hora_iso(self, valor):
+        return formata_data(valor, '%H:%M:%S')

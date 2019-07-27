@@ -1,0 +1,43 @@
+{
+    "envio_boleto": {
+        "conexao": {
+            "servidor": "cobranca.bradesconetempresa.b.br",
+            "porta": 443,
+            "url": "ibpjregistrotitulows/registrotitulo",
+            "url_homologacao": "ibpjregistrotitulows/registrotitulohomologacao",
+            "metodo": "",
+            "header": {
+                "Content-Type": "application/json"
+            },
+            "forca_tls": false,
+            "forca_http": false,
+            "forca_cadeia_conexao": false,
+            "sem_certificado": false
+        },
+        "assina": true,
+        "assinatura": {
+            "URI": "",
+            "atributo": "",
+            "tag": "",
+            "namespaces": {
+                "ns2": "http://ws.registrotitulo.ibpj.web.bradesco.com.br/",
+                "soapenv": "http://schemas.xmlsoap.org/soap/envelope/"
+            }
+         },
+        "escapa_envio": false,
+        "escapa_envio_json": false,
+        "escapa_resposta": false,
+        "resposta_xml": true,
+        "tag_retorno": "return",
+        "retorno_json": "true",
+        "escapa_retorno_json": "true",
+        "tag_erro": "",
+        "tag_erro_codigo": "cdErro",
+        "tag_erro_descricao": "msgErro",
+        "tag_sucesso": "",
+        "tag_sucesso_codigo": "cdErro",
+        "tag_sucesso_codigo_valor": "0",
+        "tag_sucesso_descricao": "msgErro",
+        "tag_sucesso_nosso_numero": "nuTituloGerado"
+    }
+}

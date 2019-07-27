@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
 #
 # PyBrasil - Functions useful for most Brazil's ERPs
 #
@@ -43,12 +42,17 @@ from __future__ import (division, print_function, unicode_literals,
                         absolute_import)
 
 
+import sys
 import unicodedata
+from lxml import etree
 
 
 def tira_acentos(texto):
     texto = texto.replace('°', 'o')
-    return unicodedata.normalize(b'NFKD', texto).encode('ascii', 'ignore').encode('utf-8')
+    if sys.version_info.major == 2:
+        return unicodedata.normalize(b'NFKD', texto).encode('ascii', 'ignore').encode('utf-8')
+    else:
+        return unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('utf-8')
 
 
 def somente_ascii(funcao):
@@ -58,40 +62,14 @@ def somente_ascii(funcao):
     def converter_para_ascii_puro(*args, **kwargs):
         texto = funcao(*args, **kwargs)
         texto = texto.replace('°', 'o')
-        return unicodedata.normalize(b'NFKD', texto).encode('ascii', 'ignore')
+        if sys.version_info.major == 2:
+            return unicodedata.normalize(b'NFKD', texto).encode('ascii', 'ignore')
+        else:
+            return unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('utf-8')
 
     return converter_para_ascii_puro
 
 
-def escape_xml(texto, aspas=True):
-    if not texto:
-        return texto
-
-    texto = texto.replace('&', '&amp;')
-    texto = texto.replace('<', '&lt;')
-    texto = texto.replace('>', '&gt;')
-
-    if aspas:
-        texto = texto.replace('"', '&quot;')
-        texto = texto.replace("'", '&apos;')
-
-    return texto
-
-
-def unescape_xml(texto):
-    if not texto:
-        return texto
-
-    texto = texto.replace('&#39;', "'")
-    texto = texto.replace('&apos;', "'")
-    texto = texto.replace('&quot;', '"')
-    texto = texto.replace('&gt;', '>')
-    texto = texto.replace('&lt;', '<')
-    texto = texto.replace('&amp;', '&')
-    texto = texto.replace('&APOS;', "'")
-    texto = texto.replace('&QUOT;', '"')
-    texto = texto.replace('&GT;', '>')
-    texto = texto.replace('&LT;', '<')
-    texto = texto.replace('&AMP;', '&')
-
-    return texto
+@somente_ascii
+def tira_acentos_ascii(texto):
+    return tira_acentos(texto)

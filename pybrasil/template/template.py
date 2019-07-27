@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
 #
 # PyBrasil - Functions useful for most Brazil's ERPs
 #
@@ -84,3 +83,11 @@ class TemplateBrasil(Template):
             kwargs['strict_undefined'] = True
 
         return super(TemplateBrasil, self).__init__(*args, **kwargs)
+
+
+def aplica_template(texto_template, dados):
+    template = TemplateBrasil(texto_template.encode('utf-8'))
+    texto_final = template.render(**dados)
+    return texto_final.decode('utf-8')
+
+

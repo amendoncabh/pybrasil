@@ -1,36 +1,50 @@
 from distutils.core import setup
 setup(
     name='pybrasil',
-    version='0.0.0.2',
+    version='1.0.0.0',
     packages=[
         'pybrasil',
         'pybrasil.base',
+        'pybrasil.certificado',
+        'pybrasil.codigo_barras',
+        'pybrasil.codigo_barras.datamatrix',
         'pybrasil.data',
         'pybrasil.febraban',
         'pybrasil.feriado',
         'pybrasil.ibge',
         'pybrasil.inscricao',
         'pybrasil.ncm',
-        'pybrasil.valor',
         'pybrasil.produto',
         'pybrasil.python_pt_BR',
         'pybrasil.telefone',
         'pybrasil.template',
         'pybrasil.valor',
+        'pybrasil.webservice'
     ],
     url='git@github.com:aricaldeira/pybrasil.git',
     license='',
-    author='Aristides Caldeira',
-    author_email='aristides.caldeira@tauga.com.br',
+    author='Ari Caldeira',
+    author_email='ari.caldeira@tauga.com.br',
     description='',
     package_data = {
-        '': ['*.txt'],
+        '': ['*.txt', '*.odt'],
     },
     install_requires=[
+        'email-validator',
+        'future',
+        'lxml',
+        'M2Crypto',
+        'mako',
+        'numpy',
+        'py3o.template',
+        'pyOpenSSL',
+        'pyparsing',
         'python-dateutil',
         'pytz',
-        'pyparsing',
-        'mako'
+        'qrcode',
+        'reportlab',
+        'sh',
+        'signxml',
+        'viivakoodi'
     ],
 )
-
